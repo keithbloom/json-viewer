@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const jsonString = jsonInput.value.trim();
         errorMessage.textContent = '';
         jsonTable.innerHTML = '';
- 
+
         if (!jsonString) {
             errorMessage.textContent = 'Please enter a JSON string.';
             return;
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const jsonData = JSON.parse(jsonString);
             const table = createJsonTable(jsonData);
             jsonTable.appendChild(table);
+            addCollapsibleFunctionality();
         } catch (error) {
             errorMessage.textContent = 'Invalid JSON: ' + error.message;
         }
@@ -25,17 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createJsonTable(data, path = '') {
         const table = document.createElement('table');
-        const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
-
-        const headerRow = document.createElement('tr');
-        ['Key', 'Value'].forEach(text => {
-            const th = document.createElement('th');
-            th.textContent = text;
-            headerRow.appendChild(th);
-        });
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
 
         for (const [key, value] of Object.entries(data)) {
             const row = document.createElement('tr');
@@ -45,7 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
             keyCell.textContent = path ? `${path}.${key}` : key;
 
             if (typeof value === 'object' && value !== null) {
+                keyCell.classList.add('collapsible');
                 const nestedTable = createJsonTable(value, path ? `${path}.${key}` : key);
+                nestedTable.classList.add('nested');
                 valueCell.appendChild(nestedTable);
             } else {
                 valueCell.textContent = JSON.stringify(value);
@@ -58,5 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         table.appendChild(tbody);
         return table;
+    }
+
+    function addCollapsibleFunctionality() {
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling.querySelector('.nested');
+                if (content.style.display === 'table-row-group') {
+                    content.style.display = 'none';
+                } else {
+                    content.style.display = 'table-row-group';
+                }
+            });
+        });
     }
 });

@@ -14,18 +14,7 @@ body {
 }
 
 h1 {
-    text-align: center;/* Remove this block as we no longer need styles for the third column */
-/*
-th:nth-child(3), td:nth-child(3) {
-    width: 20%;
-}
-*/
-
-/* Adjust the table layout for two columns */
-th, td {
-    width: 50%; /* Set equal width for both columns */
-}
-
+    text-align: center;
     color: #333;
 }
 
@@ -58,23 +47,47 @@ button:hover {
     margin-top: 10px;
 }
 
+.table-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-th, td {
+td {
     border: 1px solid #ddd;
     padding: 12px;
     text-align: left;
 }
 
-th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
 tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+.collapsible {
+    cursor: pointer;
+    user-select: none;
+}
+
+.collapsible::before {
+    content: '\25B6';
+    color: #333;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.active::before {
+    content: '\25BC';
+}
+
+.nested {
+    display: none;
+}
+
+.show {
+    display: table-row;
 }
