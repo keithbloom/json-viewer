@@ -12,9 +12,11 @@
         <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea>
         <button id="parseButton">Parse JSON</button>
         <div id="errorMessage" class="error"></div>
-        <div class="table-wrapper">
-            <div id="jsonTable"></div>
+        <div class="tree-controls">
+            <button id="expandAll">Expand All</button>
+            <button id="collapseAll">Collapse All</button>
         </div>
+        <div id="jsonTree" class="tree"></div>
     </div>
     <script src="script.js"></script>
 </body>
