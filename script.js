@@ -2,12 +2,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const jsonInput = document.getElementById('jsonInput');
     const parseButton = document.getElementById('parseButton');
     const errorMessage = document.getElementById('errorMessage');
-    const jsonTable = document.getElementById('jsonTable');
+    const jsonTree = document.getElementById('jsonTree');
+    const expandAllButton = document.getElementById('expandAll');
+    const collapseAllButton = document.getElementById('collapseAll');
 
-    parseButton.addEventListener('click', () => {
+    parseButton.addEventListener('click', parseJSON);
+    expandAllButton.addEventListener('click', () => toggleAll(true));
+    collapseAllButton.addEventListener('click', () => toggleAll(false));
+
+    function parseJSON() {
         const jsonString = jsonInput.value.trim();
         errorMessage.textContent = '';
-        jsonTable.innerHTML = '';
+        jsonTree.innerHTML = '';
 
         if (!jsonString) {
             errorMessage.textContent = 'Please enter a JSON string.';
@@ -16,55 +22,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const jsonData = JSON.parse(jsonString);
-            const table = createJsonTable(jsonData);
-            jsonTable.appendChild(table);
-            addCollapsibleFunctionality();
+            const tree = createJsonTree(jsonData);
+            jsonTree.appendChild(tree);
+            addToggleListeners();
         } catch (error) {
             errorMessage.textContent = 'Invalid JSON: ' + error.message;
         }
-    });
-
-    function createJsonTable(data, path = '') {
-        const table = document.createElement('table');
-        const tbody = document.createElement('tbody');
-
-        for (const [key, value] of Object.entries(data)) {
-            const row = document.createElement('tr');
-            const keyCell = document.createElement('td');
-            const valueCell = document.createElement('td');
-
-            keyCell.textContent = path ? `${path}.${key}` : key;
-
-            if (typeof value === 'object' && value !== null) {
-                keyCell.classList.add('collapsible');
-                const nestedTable = createJsonTable(value, path ? `${path}.${key}` : key);
-                nestedTable.classList.add('nested');
-                valueCell.appendChild(nestedTable);
-            } else {
-                valueCell.textContent = JSON.stringify(value);
-            }
-
-            row.appendChild(keyCell);
-            row.appendChild(valueCell);
-            tbody.appendChild(row);
-        }
-
-        table.appendChild(tbody);
-        return table;
     }
 
-    function addCollapsibleFunctionality() {
-        const collapsibles = document.querySelectorAll('.collapsible');
-        collapsibles.forEach(item => {
-            item.addEventListener('click', function() {
-                this.classList.toggle('active');
-                const content = this.nextElementSibling.querySelector('.nested');
-                if (content.style.display === 'table-row-group') {
-                    content.style.display = 'none';
-                } else {
-                    content.style.display = 'table-row-group';
-                }
+    function createJsonTree(data) {
+        const ul = document.createElement('ul');
+
+        for (const [key, value] of Object.entries(data)) {
+            const li = document.createElement('li');
+            const keySpan = document.createElement('span');
+            keySpan.textContent = key;
+            keySpan.classList.add('key');
+            li.appendChild(keySpan);
+
+            if (typeof value === 'object' && value !== null) {
+                const caret = document.createElement('span');
+                caret.classList.add('caret');
+                li.insertBefore(caret, keySpan);
+
+                const typeSpan = document.createElement('span');
+                typeSpan.textContent = Array.isArray(value) ? ' [Array]' : ' {Object}';
+                typeSpan.classList.add(Array.isArray(value) ? 'type-array' : 'type-object');
+                li.appendChild(typeSpan);
+
+                const nested = createJsonTree(value);
+                nested.classList.add('nested');
+                li.appendChild(nested);
+            } else {
+                const valueSpan = document.createElement('span');
+                valueSpan.textContent = ': ' + JSON.stringify(value);
+                valueSpan.classList.add('value');
+                li.appendChild(valueSpan);
+            }
+
+            ul.appendChild(li);
+        }
+
+        return ul;
+    }
+
+    function addToggleListeners() {
+        const toggler = document.getElementsByClassName("caret");
+        for (let i = 0; i < toggler.length; i++) {
+            toggler[i].addEventListener("click", function() {
+                this.parentElement.querySelector(".nested").classList.toggle("active");
+                this.classList.toggle("caret-down");
             });
-        });
+        }
+    }
+
+    function toggleAll(expand) {
+        const carets = document.getElementsByClassName("caret");
+        const nesteds = document.getElementsByClassName("nested");
+
+        for (let caret of carets) {
+            if (expand) {
+                caret.classList.add("caret-down");
+            } else {
+                caret.classList.remove("caret-down");
+            }
+        }
+
+        for (let nested of nesteds) {
+            if (expand) {
+                nested.classList.add("active");
+            } else {
+                nested.classList.remove("active");
+            }
+        }
     }
 });

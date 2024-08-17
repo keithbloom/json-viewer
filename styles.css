@@ -9,7 +9,6 @@ body {
 .container {
     width: 80%;
     margin: auto;
-    overflow: hidden;
     padding: 20px;
 }
 
@@ -28,14 +27,13 @@ textarea {
 }
 
 button {
-    display: block;
-    width: 100%;
     padding: 10px;
     background-color: #333;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-right: 10px;
 }
 
 button:hover {
@@ -47,47 +45,57 @@ button:hover {
     margin-top: 10px;
 }
 
-.table-wrapper {
-    overflow-x: auto;
-    max-width: 100%;
+.tree-controls {
+    margin: 20px 0;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+.tree {
+    font-family: monospace;
     margin-top: 20px;
 }
 
-td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
+.tree ul {
+    list-style-type: none;
+    padding-left: 20px;
 }
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
+.tree li {
+    margin: 5px 0;
 }
 
-.collapsible {
+.tree .caret {
     cursor: pointer;
     user-select: none;
 }
 
-.collapsible::before {
-    content: '\25B6';
-    color: #333;
+.tree .caret::before {
+    content: "\25B6";
+    color: black;
     display: inline-block;
-    margin-right: 5px;
+    margin-right: 6px;
 }
 
-.active::before {
-    content: '\25BC';
+.tree .caret-down::before {
+    transform: rotate(90deg);
 }
 
-.nested {
+.tree .nested {
     display: none;
 }
 
-.show {
-    display: table-row;
+.tree .active {
+    display: block;
+}
+
+.tree .key {
+    font-weight: bold;
+}
+
+.tree .value {
+    color: #0066cc;
+}
+
+.tree .type-object,
+.tree .type-array {
+    color: #009900;
 }
